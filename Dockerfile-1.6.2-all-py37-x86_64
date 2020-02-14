@@ -1,0 +1,34 @@
+FROM ibmcom/powerai:1.6.2-all-ubuntu18.04-py37
+# Copy the Launcher into the environment
+COPY app /app
+WORKDIR /app
+# Set root user
+USER root
+
+# Install useful ubuntu packages
+RUN apt-get update && apt-get install -y gnupg git vim cmake wget unzip
+
+ARG PATH=/opt/anaconda/bin/:$PATH
+ENV PATH=/opt/anaconda/bin/:$PATH
+
+# Set shell
+SHELL ["/bin/bash", "-c"]
+
+# Install base python packages
+#RUN eval "$(conda shell.bash hook |sed 's/base/wmlce/g')" && /opt/anaconda/bin/conda list
+RUN /opt/anaconda/bin/conda config --prepend channels \
+https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda/
+
+RUN /opt/anaconda/bin/conda install -n wmlce -y pandas nodejs jupyterlab 
+RUN eval "$(conda shell.bash hook |sed 's/base/wmlce/g')" && /opt/anaconda/bin/conda list && /opt/anaconda/bin/conda config --show 
+RUN /opt/anaconda/bin/conda config --set channel_priority false
+
+#RUN /opt/anaconda/bin/conda install -n wmlce -y -c rapidsai -c nvidia -c conda-forge \
+#    -c defaults rapids=0.12 python=3.7 cudatoolkit=10.1
+
+RUN /opt/anaconda/bin/conda install -c rapidsai -c nvidia -c conda-forge \
+    -c defaults rapids=0.12 python=3.7 cudatoolkit=10.1
+
+#RUN conda install -c nvidia/label/cuda10.1 -c rapidsai/label/cuda10.1 -c numba -c conda-forge -c defaults cudf
+
+CMD ["/bin/bash", "/app/launch_jupyter.sh"]
