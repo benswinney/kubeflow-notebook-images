@@ -20,7 +20,11 @@ RUN /opt/anaconda/bin/conda config --prepend channels \
 https://public.dhe.ibm.com/ibmdl/export/pub/software/server/ibm-ai/conda/
 
 RUN /opt/anaconda/bin/conda install -n wmlce -y pandas nodejs jupyterlab 
-RUN eval "$(conda shell.bash hook |sed 's/base/wmlce/g')" && /opt/anaconda/bin/conda list
-RUN /opt/anaconda/bin/conda install -n wmlce -y -c rapidsai rapids
+RUN eval "$(conda shell.bash hook |sed 's/base/wmlce/g')" && /opt/anaconda/bin/conda list && /opt/anaconda/bin/conda config --show 
+RUN /opt/anaconda/bin/conda config --set channel_priority false
+
+
+RUN /opt/anaconda/bin/conda install -n wmlce -y -c rapidsai -c nvidia -c conda-forge \
+    -c defaults rapids=0.11 python=3.7 cudatoolkit=10.1
 
 CMD ["/bin/bash", "/app/launch_jupyter.sh"]
