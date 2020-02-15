@@ -1,7 +1,5 @@
 FROM ibmcom/powerai:1.6.2-all-ubuntu18.04-py37
 # Copy the Launcher into the environment
-COPY app /app
-WORKDIR /app
 # Set root user
 USER root
 
@@ -23,5 +21,6 @@ RUN /opt/anaconda/bin/conda install -n wmlce -y pandas nodejs jupyterlab
 RUN /opt/anaconda/bin/conda install -c rapidsai -c nvidia -c conda-forge \
     -c defaults rapids=0.12 python=3.7 cudatoolkit=10.1
 
-
-CMD ["/bin/bash", "/app/launch_jupyter.sh"]
+ENV NB_PREFIX /
+ENV SHELL bash
+CMD env PATH=$PATH PYTHONPATH=$PYTHONPATH LD_LIBRARY_PATH=$LD_LIBRARY_PATH jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX}
