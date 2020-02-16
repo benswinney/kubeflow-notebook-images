@@ -24,4 +24,14 @@ Available options - ppc64le, x86_64
 examples
 Dockerfile-1.6.2-all-py37-ppc64le #Docker image that builds all (including rapids) frameworks for python37 on ppc64le
 
+## Kaniko
+
+See how to use Kaniko https://github.com/GoogleContainerTools/kaniko
+
+### Setup Instructions
+Get a docker config file which can be created by doing a `docker login`. You will find it at `$HOME/.docker/config.json`
+Take this file and create a secret. 
+`kubectl create secret generic kaniko-secret --from-file=$HOME/.docker/config.json`
+
+These instructions also assume an open access github repo.
 
